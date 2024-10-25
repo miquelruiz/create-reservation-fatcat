@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 import argparse
+import getpass
 import logging
 import pytz
 import sys
 import requests
 
-from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 
 
 TZ = pytz.timezone('America/New_York')
@@ -25,7 +26,7 @@ RESERVATION_TITLE = 'Laser BUS'
 
 # Add as many reservations here as needed
 RESERVATIONS = [
-    datetime(2024, 10, 25, hour=14, minute=0, tzinfo=TZ),
+    datetime(2024, 10, 26, hour=14, minute=0, tzinfo=TZ),
     # datetime(2024, 10, 29, hour=18, minute=0, tzinfo=TZ),
     # datetime(2024, 11, 6, hour=18, minute=0, tzinfo=TZ),
 ]
@@ -125,14 +126,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', action='store_true', default=False)
     parser.add_argument('user')
-    parser.add_argument('password')
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     s = requests.Session()
-    login(s, args.user, args.password)
+    login(s, args.user, getpass.getpass())
     for r in RESERVATIONS:
         make_reservation(s, r)
 
